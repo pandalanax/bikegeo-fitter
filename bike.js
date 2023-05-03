@@ -20,97 +20,43 @@ function BikeData() {
 	this.name = "Default";
 	this.color = "#ff0000";
 	this.hta = 71;
-	this.htl = 125;
-	this.fl = 396;
-	this.fo = 47;
-	this.bbDrop = 69;
+	this.fstack = 632;
+	this.freach = 397;
 	this.spacers = 35;
+	this.headset = 15;
 	this.sl = 90;
 	this.sa = -9;
-	this.sta = 74;
-	this.ttl = 530;
-	this.ws = 622;
-	this.csl = 440;
-	this.tireSize = 25;
-	this.crankLength = 172.5;
-	this.toeLength = 100;
+	this.handlebarReach = 75;
 }
 
 function BikeGeometryCalculations() {
 	/* Geometry calculations */
-	/**
-	 * @returns rear axle X position in BB space
-	 */
-	 this.rearAxle = function () {
-		return -Math.sqrt(this.csl * this.csl - this.bbDrop * this.bbDrop);
-	}
-	/**
-	 * @returns front axle X position in BB space
-	 */
-	this.frontAxle = function () {
-		return this.fo / Math.cos(deg2rad(90 - this.hta)) +
-			(this.htl + this.fl - this.fo * Math.tan(deg2rad(90 - this.hta))) * Math.cos(deg2rad(this.hta)) +
-			this.reach();
-	}
-	/**
-	 * @returns wheelbase of bike
-	 */
-	this.wheelbase = function () {
-		return (this.frontAxle() - this.rearAxle());
-	}
-	
-	this.frontCenter = function() {
-		return Math.sqrt(this.bbDrop**2 + this.frontAxle()**2);
-	}
-	this.rearCenter = function() {
-		return Math.sqrt(this.csl**2 - this.bbDrop**2);
-	}
-
-	this.frontCenter = function () {
-		return Math.sqrt(this.bbDrop ** 2 + this.frontAxle() ** 2);
-	}
-	this.rearCenter = function () {
-		return Math.sqrt(this.csl ** 2 - this.bbDrop ** 2);
-	}
 
 	this.reach = function () {
-		return this.ttl - this.stack() * Math.tan(deg2rad(90 - this.sta));
+		return this.freach;
 	}
 	this.reachWithSpacers = function () {
-		return this.reach() - this.spacers * Math.cos(deg2rad(this.hta));
+		return this.reach() - (this.spacers+this.headset) * Math.cos(deg2rad(this.hta));
 	}
 	this.reachWithStem = function () {
 		// convert stem angle to XY space
 		const stemAngleAct = deg2rad(90 - this.hta + this.sa);
 		return this.reachWithSpacers() + this.sl * Math.cos(stemAngleAct);
 	}
+	this.reachWithStemWithHandlebar = function () {
+		return this.reachWithStem() + this.handlebarReach;
+	}
 
 	this.stack = function () {
-		return Math.sin(deg2rad(this.hta)) * (this.htl + this.fl - this.fo / Math.tan(deg2rad(this.hta))) + this.bbDrop;
+		return this.fstack;
 	}
 	this.stackWithSpacers = function () {
-		return this.stack() + this.spacers * Math.sin(deg2rad(this.hta));
+		return this.stack() + (this.spacers+this.headset) * Math.sin(deg2rad(this.hta));
 	}
 	this.stackWithStem = function () {
 		// convert stem angle to XY space
 		const stemAngleAct = deg2rad(90 - this.hta + this.sa);
 		return this.stackWithSpacers() - this.sl * Math.sin(-stemAngleAct);
-	}
-
-	this.mechanicalTrail = function () {
-		return this.wheelAndTireRadius() * Math.sin(deg2rad(90 - this.hta)) - this.fo;
-	}
-	this.groundTrail = function () {
-		return this.wheelAndTireRadius() / Math.tan(deg2rad(this.hta)) - this.fo / Math.sin(deg2rad(this.hta));
-	}
-	this.rearWheelTrail = function () {
-		return this.wheelbase() * Math.sin(deg2rad(this.hta)) + this.mechanicalTrail();
-	}
-	this.wheelAndTireRadius = function () {
-		return (this.ws + this.tireSize) / 2;
-	}
-	this.toeOverlap = function () {
-		return Math.max(0, this.crankLength + this.wheelAndTireRadius() - Math.sqrt((this.frontAxle() - this.toeLength) ** 2 + this.bbDrop ** 2));
 	}
 }
 
@@ -120,67 +66,45 @@ function BikeGraphics() {
 		this.context.canvas.width += 0;
 		
 		const ttY = BB[1] - this.stack() * mm2px; // Y coordinate of top tube
-		const seatX = BB[0] - (this.ttl - this.reach()) * mm2px; // X of top of seat tube
-		const axleY = BB[1] - this.bbDrop * mm2px; // Y coordinate of axles
-		const rearAxle = this.rearAxle() * mm2px + BB[0]; // X of rear axle
-		const frontAxle = this.frontAxle() * mm2px + BB[0]; // X of front axle
+		const seatX = BB[0] - this.reach() * mm2px; // X of top of seat tube
+		//const axleY = BB[1] - this.bbDrop * mm2px; // Y coordinate of axles
+		//const rearAxle = this.rearAxle() * mm2px + BB[0]; // X of rear axle
+		//const frontAxle = this.frontAxle() * mm2px + BB[0]; // X of front axle
 
 		// upper end of fork
-		const forkTX = BB[0] + (this.reach() + this.htl * Math.cos(deg2rad(this.hta))) * mm2px;
-		const forkTY = ttY + this.htl * Math.sin(deg2rad(this.hta)) * mm2px;
+		//const forkTX = BB[0] + (this.reach() + this.htl * Math.cos(deg2rad(this.hta))) * mm2px;
+		//const forkTY = ttY + this.htl * Math.sin(deg2rad(this.hta)) * mm2px;
 
 		// Drawing starts.
 		// front triangle
 		this.context.moveTo(BB[0], BB[1]); // start from bottom bracket
-		this.context.lineTo(seatX, ttY); // seat tube
-		this.context.lineTo(BB[0] + this.reach() * mm2px, ttY); // top tube
-		this.context.lineTo(forkTX, forkTY) // head tube
-		this.context.lineTo(BB[0], BB[1]); // down tube
+		this.context.lineTo(BB[0], ttY);
+		this.context.lineTo(BB[0]+this.reach() * mm2px, ttY);
+		this.context.lineTo(BB[0] + this.reachWithSpacers() * mm2px, BB[1] - this.stackWithSpacers() * mm2px);
+		this.context.lineTo(BB[0] + this.reachWithStem() * mm2px, BB[1] - this.stackWithStem() * mm2px);
+		this.context.lineTo(BB[0] + this.reachWithStemWithHandlebar() * mm2px, BB[1] - this.stackWithStem() * mm2px);
 
+		// seat tube
+		//this.context.lineTo(BB[0] + this.reach() * mm2px, ttY); // top tube
+		//this.context.lineTo(forkTX, forkTY) // head tube
+		//this.context.lineTo(BB[0], BB[1]); // down tube
 		// rear triangle
-		this.context.lineTo(rearAxle, axleY); // chainstay
-		this.context.lineTo(seatX, ttY); // seat tube
+		//this.context.lineTo(rearAxle, axleY); // chainstay
+		//this.context.lineTo(seatX, ttY); // seat tube
 
 		// fork
-		this.context.moveTo(forkTX, forkTY);
-		this.context.lineTo(frontAxle, axleY);
+		//this.context.moveTo(forkTX, forkTY);
+		//this.context.lineTo(frontAxle, axleY);
 
-		// stem and spacers
+		/* stem and spacers
 		this.context.moveTo(BB[0] + this.reach() * mm2px, ttY); // top tube
 		this.context.lineTo(BB[0] + this.reachWithSpacers() * mm2px, BB[1] - this.stackWithSpacers() * mm2px);
 		this.context.lineTo(BB[0] + this.reachWithStem() * mm2px, BB[1] - this.stackWithStem() * mm2px);
-
+		*/
 		this.context.strokeStyle = this.color;
 		this.context.lineWidth = 2;
 		this.context.stroke();
-
-		// rear wheel
-		this.context.lineWidth = 1;
-		this.context.fillStyle = "rgba(0,0,0,0.1)"
-		this.context.beginPath();
-		this.context.arc(rearAxle, axleY, this.ws / 2 * mm2px, 0, 2 * Math.PI)
-		this.context.arc(rearAxle, axleY, this.wheelAndTireRadius() * mm2px, 0, 2 * Math.PI)
-		this.context.fill();
-		this.context.stroke();
-
-		// front wheel
-		this.context.beginPath();
-		this.context.arc(frontAxle, axleY, this.ws / 2 * mm2px, 0, 2 * Math.PI)
-		this.context.arc(frontAxle, axleY, this.wheelAndTireRadius() * mm2px, 0, 2 * Math.PI)
-		this.context.fill();
-		this.context.stroke();
-
-		this.context.fillStyle = "rgba(128,0,128,0.1)"
-		this.context.setLineDash([5, 5])
-		this.context.beginPath();
-		this.context.arc(BB[0], BB[1], this.crankLength * mm2px, 0, 2 * Math.PI)
-		this.context.fill();
-		this.context.stroke();
-		// Front of toe
-		this.context.setLineDash([1, 5])
-		this.context.beginPath();
-		this.context.arc(BB[0] + this.toeLength * mm2px, BB[1], this.crankLength * mm2px, -Math.PI / 4, Math.PI / 4)
-		this.context.stroke();
+		
 	}
 }
 
@@ -214,62 +138,45 @@ function Bike(id, cvs, form) {
 	// update the form
 	this.updateFormReach = function () {
 		// update outputs to form
-		form.reach.value = this.reach().toFixed(numOfDec);
+		form.freach.value = this.reach().toFixed(numOfDec);
 		form.reachWspc.value = (this.reachWithSpacers()).toFixed(numOfDec);
 		form.reachWstm.value = (this.reachWithStem()).toFixed(numOfDec);
+		form.reachWstmWhandlebar.value = (this.reachWithStemWithHandlebar()).toFixed(numOfDec);
+
 	}
 
 	// update the form
 	this.updateFormStack = function () {
 		// update outputs to form
-		form.stack.value = this.stack().toFixed(numOfDec);
+		form.fstack.value = this.stack().toFixed(numOfDec);
 		form.stackWspc.value = (this.stackWithSpacers()).toFixed(numOfDec);
 		form.stackWstm.value = (this.stackWithStem()).toFixed(numOfDec);
 	}
 
-	// update the form
-	this.updateFormTrail = function () {
-		// update outputs to form
-		form.toeOvlp.value = (this.toeOverlap()).toFixed(numOfDec);
-		form.groundTrail.value = (this.groundTrail()).toFixed(numOfDec);
-		form.mechTrail.value = (this.mechanicalTrail()).toFixed(numOfDec);
-	}
 
 	// update callback for data
 	this.update = function () {
 		// update values from form
 		this.name = form.name.value;
-		this.ws = Number(form.ws.value);
-		this.csl = Number(form.csl.value);
-		this.sta = Number(form.sta.value);
 		this.hta = Number(form.hta.value);
-		this.htl = Number(form.htl.value);
-		this.ttl = Number(form.ttl.value);
-		this.fl = Number(form.fl.value);
-		this.fo = Number(form.fo.value);
-		this.bbDrop = Number(form.bbDrop.value);
+		this.fstack = Number(form.fstack.value);
+		this.freach = Number(form.freach.value);
 		this.spacers = Number(form.spacers.value);
+		this.headset = Number(form.headset.value);
 		this.sl = Number(form.sl.value);
 		this.sa = Number(form.sa.value);
-		this.toeLength = Number(form.toeLength.value);
-		this.crankLength = Number(form.crankLength.value);
-		this.tireSize = Number(form.tireSize.value);
+		this.handlebarReach = Number(form.handlebarReach.value);
+
 		this.color = form.color.value;
 
 		// calculate stack and reach. Reach calculation uses stack value.
 		this.updateFormReach(form);
 		this.updateFormStack(form);
-		this.updateFormTrail(form);
 
 		// clear canvas and redraw the bike
 		this.drawBike();
-		 // save bike data to local storage
+		// save bike data to local storage
 		this.saveBike();
-
-		// update wheelbase, which is calculated in drawing function
-		form.wb.value = (this.wheelbase()).toFixed(numOfDec);
-		form.frontCenter.value = this.frontCenter().toFixed(numOfDec);
-		form.rearCenter.value = this.rearCenter().toFixed(numOfDec);
 	}
 
 	// function to save data to local storage
@@ -339,53 +246,30 @@ function addBike(id, bikes) {
 	// add column header
 	addCell(row_bikes, "th", "input", "input",
 		{name: "name", form: newBikeForm.id, type: "text", value : "Bike " + index, onChange : "bikes[" + index + "].update()"});
-	// wheel size
-	addCell(row_ws, "td", "input", "input",
-		{name: "ws", form: newBikeForm.id, type: "number", min : 0, max : 700, onChange : "bikes[" + index + "].update()"});
-	// tire size
-	addCell(row_tireSize, "td", "input", "input",
-		{name: "tireSize", form: newBikeForm.id, type: "number", min : 0, max : 200, onChange : "bikes[" + index + "].update()"});
-	// bottom bracket drop
-	addCell(row_bbDrop, "td", "input", "input",
-		{name: "bbDrop", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});	
-	// fort length
-	addCell(row_fl, "td", "input", "input",
-		{name: "fl", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});	
-	// fork offset
-	addCell(row_fo, "td", "input", "input",
-		{name: "fo", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
-	addCell(row_ttl, "td", "input", "input",
-		{name: "ttl", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
-	addCell(row_htl, "td", "input", "input",
-		{name: "htl", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
 	addCell(row_hta, "td", "input", "input",
 		{name: "hta", form: newBikeForm.id, type: "number", step : 0.1, min : -90, max : 90, onChange : "bikes[" + index + "].update()"});
-	addCell(row_sta, "td", "input", "input",
-		{name: "sta", form: newBikeForm.id, type: "number", step : 0.1, min : -90, max : 90, onChange : "bikes[" + index + "].update()"});
-	addCell(row_csl, "td", "input", "input",
-		{name: "csl", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
+	addCell(row_fstack, "td", "input", "input",
+		{name: "fstack", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
+		addCell(row_freach, "td", "input", "input",
+		{name: "freach", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
 	addCell(row_spacers, "td", "input", "input",
 		{name: "spacers", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
+	addCell(row_headset, "td", "input", "input",
+		{name: "headset", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
 	addCell(row_sl, "td", "input", "input",
 		{name: "sl", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
 	addCell(row_sa, "td", "input", "input",
 		{name: "sa", form: newBikeForm.id, type: "number", min : -90, max : 90, onChange : "bikes[" + index + "].update()"});
-	addCell(row_toeLength, "td", "input", "input",
-		{name: "toeLength", form: newBikeForm.id, type: "number", min : 0, max : 200, onChange : "bikes[" + index + "].update()"});
-	addCell(row_crankLength, "td", "input", "input",
-		{name: "crankLength", form: newBikeForm.id, type: "number", step : 0.5, min : 100, max : 250, onChange : "bikes[" + index + "].update()"});
-	addCell(row_wb, "td", "output", "output", {name: "wb", form: newBikeForm.id});
-	addCell(row_frontCenter, "td", "output", "output", {name: "frontCenter", form: newBikeForm.id});
-	addCell(row_rearCenter, "td", "output", "output", {name: "rearCenter", form: newBikeForm.id});
-	addCell(row_toeOvlp, "td", "output", "output", {name: "toeOvlp", form: newBikeForm.id});
-	addCell(row_groundTrail, "td", "output", "output", {name: "groundTrail", form: newBikeForm.id});
-	addCell(row_mechTrail, "td", "output", "output", {name: "mechTrail", form: newBikeForm.id});
-	addCell(row_reach, "td", "output", "output", {name: "reach", form: newBikeForm.id});
-	addCell(row_stack, "td", "output", "output", {name: "stack", form: newBikeForm.id});
+		addCell(row_handlebarReach, "td", "input", "input",
+		{name: "handlebarReach", form: newBikeForm.id, type: "number", min : -90, max : 90, onChange : "bikes[" + index + "].update()"});
+	//addCell(row_freach, "td", "output", "output", {name: "freach", form: newBikeForm.id});
+	//addCell(row_fstack, "td", "output", "output", {name: "fstack", form: newBikeForm.id});
 	addCell(row_reachWspc, "td", "output", "output", {name: "reachWspc", form: newBikeForm.id});
 	addCell(row_stackWspc, "td", "output", "output", {name: "stackWspc", form: newBikeForm.id});
 	addCell(row_reachWstm, "td", "output", "output", {name: "reachWstm", form: newBikeForm.id});
 	addCell(row_stackWstm, "td", "output", "output", {name: "stackWstm", form: newBikeForm.id});
+	addCell(row_reachWstmWhandlebar, "td", "output", "output", {name: "reachWstmWhandlebar", form: newBikeForm.id});
+
 	addCell(row_color, "td", "input", "input",
 		{name: "color", form: newBikeForm.id, type: "color", onChange : "bikes[" + index + "].update()"});
 
