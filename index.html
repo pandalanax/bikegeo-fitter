@@ -26,21 +26,23 @@
 <body>
   <!-- hidden help image-->
   <div style="visibility:hidden;height:0">
-    <img id="helpPng" src="help.png" alt="Error in help function">
+    <img id="helpPng" src="help1.png" alt="Error in help function">
   </div>
   <div class = "body">
-    <div id = "canvases" class = "LeftColumn" >
+
+		<div id = "canvases" class = "LeftColumn" >
       <canvas id="bg" width="600" height="320" class="bike"
 	      style="z-index: 0;     background-color:#F8F8F8;">
       </canvas> 
+ 
       <canvas id="help" width="600" height="320" class="bike"
 	      style="z-index: 10;">
       </canvas>
       <div class="disclaimer">
 		<a href="#" id="helpLink"> Toggle help </a> <br>
-		The calculated reach and stack values are only approximate values. The bike manufacturer should be contacted, if exact values are needed.
       </div>
     </div>
+
     <script src="./bike.js"></script>
     <!-- "virtual" dedicated forms for the bikes-->
 	<div id="bikeForms">
@@ -57,63 +59,35 @@
 					<!-- style="color:#ff0000;" -->
 			</thead>
 			<tbody>
-				<tr id="row_ws"><td>Wheel size(1)</td>  
-				</tr>
-				<tr id="row_tireSize"><td>Tire size(1.5)</td>
-				</tr>
-				<tr id="row_bbDrop"><td>BB drop(2)</td>  
-				</tr> 
-				<tr id="row_fl"><td>Fork length(3)     </td>  
-				</tr> 
-				<tr id="row_fo"><td>Fork offset(4)      </td>  
-				</tr> 
-				<tr id="row_ttl"><td>Top tube length(5) </td>  
-				</tr> 
-				<tr id="row_htl"><td>Head tube length(6)</td>  
-				</tr> 
-				<tr id="row_hta"><td>Head tube angle(7) </td>  
-				</tr> 
-				<tr id="row_sta"><td>Seat tube angle(8) </td>  
-				</tr> 
-				<tr id="row_csl"><td>Chainstay length(9)</td>  
+				<tr id="row_hta"><td>Head tube angle(1)</td>  
+				</tr>   
+				<tr id="row_fstack"><td>Frame Stack(2) </td>  
+				</tr>   
+				<tr id="row_freach"><td>Frame Reach(3) </td>  
+				</tr>    
+				<tr id="row_spacers"><td>Spacers height(4)</td>  
+				</tr>   
+				<tr id="row_headset"><td>Headset height(5)</td>  
+				</tr>     
+				<tr id="row_sl"><td>Stem length(6)</td>  
 				</tr>      
-				<tr id="row_spacers"><td>Spacers height(10)</td>  
-				</tr>      
-				<tr id="row_sl"><td>Stem length(11)</td>  
-				</tr>      
-				<tr id="row_sa"><td>Stem angle(12)</td>  
+				<tr id="row_sa"><td>Stem angle(7)</td>  
 				</tr>
-				<tr id="row_toeLength"><td>Toe length(20)</td>
-				</tr>
-				<tr id="row_crankLength"><td>Crank length(20.1)</td>
+				<tr id="row_handlebarReach"><td>Handlebar Reach(8)</td>  
 				</tr>
 			</tbody>
 			<tfoot>
-				<tr id="row_wb"><td>Wheelbase(13)</td>
+				<tr id="row_reachWspc" class="divider"><td>Reach(spacers)(9)</td>
 				</tr>
-				<tr id="row_frontCenter"><td>Front Center(13.1)</td>
+				<tr id="row_stackWspc"><td>Stack(spacers)(10)</td>
 				</tr>
-				<tr id="row_rearCenter"><td>Rear Center(13.1)</td>
+				<tr id="row_reachWstm" class="divider"><td>Reach(stem)(11)</td>
 				</tr>
-				<tr id="row_toeOvlp"><td>Toe Overlap(14)</td>
+				<tr id="row_reachWstmWhandlebar"><td>Reach(Handlebar)(12)</td>
 				</tr>
-				<tr id="row_groundTrail"><td>Ground Trail(15)</td>
+				<tr id="row_stackWstm"><td>Stack(stem)(13)</td>
 				</tr>
-				<tr id="row_mechTrail"><td>Mechanical Trail(16)</td>
-				</tr>
-				<tr id="row_reach" class="divider"><td>Reach(frame)(17)</td>
-				</tr>
-				<tr id="row_stack"><td>Stack(frame)(18)</td>
-				</tr>
-				<tr id="row_reachWspc" class="divider"><td>Reach(spacers)(19)</td>
-				</tr>
-				<tr id="row_stackWspc"><td>Stack(spacers)(20)</td>
-				</tr>
-				<tr id="row_reachWstm" class="divider"><td>Reach(stem)(21)</td>
-				</tr>
-				<tr id="row_stackWstm"><td>Stack(stem)(22)</td>
-				</tr>
-				<tr id="row_color"><td>Graphics color</td>  
+				<tr id="row_color" class="divider"><td>Graphics color</td>  
 				</tr>
 				<tr id="row_controls"><td><button onclick="addBike(null, bikes)">Add</button></td>  
 				</tr>
