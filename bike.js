@@ -60,6 +60,23 @@ function BikeGeometryCalculations() {
 	}
 }
 
+function drawLabel( ctx, text, p1, p2, x_text, y_text ){
+  
+	var dx = p2.x - p1.x;
+	var dy = p2.y - p1.y;   
+	var p, pad;
+	p = p1;
+	pad = 1/2;
+	
+	ctx.save();
+	ctx.textAlign = "center";
+	ctx.translate(p.x+dx*pad,p.y+dy*pad);
+	ctx.rotate(Math.atan2(dy,dx));
+	ctx.fillText(text,x_text, y_text);
+	ctx.restore();
+  }
+
+  
 function BikeGraphics() {
 	this.drawBike = function () {
 		// hack to reset canvas
@@ -78,32 +95,47 @@ function BikeGraphics() {
 		// Drawing starts.
 		// front triangle
 		this.context.moveTo(BB[0], BB[1]); // start from bottom bracket
+		// stack line
 		this.context.lineTo(BB[0], ttY);
+
+		//reach
 		this.context.lineTo(BB[0]+this.reach() * mm2px, ttY);
+		
+		//reach with spacers
 		this.context.lineTo(BB[0] + this.reachWithSpacers() * mm2px, BB[1] - this.stackWithSpacers() * mm2px);
+		
+		//reach with stem
 		this.context.lineTo(BB[0] + this.reachWithStem() * mm2px, BB[1] - this.stackWithStem() * mm2px);
+		
+		//reach with handlebar
 		this.context.lineTo(BB[0] + this.reachWithStemWithHandlebar() * mm2px, BB[1] - this.stackWithStem() * mm2px);
 
-		// seat tube
-		//this.context.lineTo(BB[0] + this.reach() * mm2px, ttY); // top tube
-		//this.context.lineTo(forkTX, forkTY) // head tube
-		//this.context.lineTo(BB[0], BB[1]); // down tube
-		// rear triangle
-		//this.context.lineTo(rearAxle, axleY); // chainstay
-		//this.context.lineTo(seatX, ttY); // seat tube
+		//enlarge cockpit
+		const BBcockpit = [170, 600];
+		const mm2pxCockpit = 0.6;
+		this.context.moveTo(BBcockpit[0]+this.reach() * mm2pxCockpit, BBcockpit[1] - this.stack() * mm2pxCockpit);
+		//reach with spacers
+		this.context.lineTo(BBcockpit[0] + this.reachWithSpacers() * mm2pxCockpit, BBcockpit[1] - this.stackWithSpacers() * mm2pxCockpit);
 
-		// fork
-		//this.context.moveTo(forkTX, forkTY);
-		//this.context.lineTo(frontAxle, axleY);
+		//reach with stem
+		this.context.lineTo(BBcockpit[0] + this.reachWithStem() * mm2pxCockpit, BBcockpit[1] - this.stackWithStem() * mm2pxCockpit);
+		
+		//reach with handlebar
+		this.context.lineTo(BBcockpit[0] + this.reachWithStemWithHandlebar() * mm2pxCockpit, BBcockpit[1] - this.stackWithStem() * mm2pxCockpit);
 
-		/* stem and spacers
-		this.context.moveTo(BB[0] + this.reach() * mm2px, ttY); // top tube
-		this.context.lineTo(BB[0] + this.reachWithSpacers() * mm2px, BB[1] - this.stackWithSpacers() * mm2px);
-		this.context.lineTo(BB[0] + this.reachWithStem() * mm2px, BB[1] - this.stackWithStem() * mm2px);
+		/*
+		drawLabel(this.context,"Stack",{x:BB[0],y:BB[1]},{x:BB[0],y:ttY},0, 15)
+		drawLabel(this.context,"Reach",{x:BB[0],y:ttY},{x:BB[0]+this.reach() * mm2px,y:ttY},0,15)
+		drawLabel(this.context,"R spacers",{x:BBcockpit[0]+this.reach() * mm2pxCockpit,y:BBcockpit[1] - this.stack() * mm2pxCockpit},{x:BBcockpit[0] + this.reachWithSpacers() * mm2pxCockpit,y:BBcockpit[1] - this.stackWithSpacers() * mm2pxCockpit},-10,-10)
+		drawLabel(this.context,"R Stem",{x:BBcockpit[0] + this.reachWithSpacers() * mm2pxCockpit,y:BBcockpit[1] - this.stackWithSpacers() * mm2pxCockpit},{x:BBcockpit[0] + this.reachWithStem() * mm2pxCockpit,y:BBcockpit[1] - this.stackWithStem() * mm2pxCockpit},0,-10)
+		drawLabel(this.context,"R Handlebar",{x:BBcockpit[0] + this.reachWithStem() * mm2pxCockpit,y:BBcockpit[1] - this.stackWithStem() * mm2pxCockpit},{x:BBcockpit[0] + this.reachWithStemWithHandlebar() * mm2pxCockpit,y:BBcockpit[1] - this.stackWithStem() * mm2pxCockpit},20,-10)
 		*/
+
 		this.context.strokeStyle = this.color;
 		this.context.lineWidth = 2;
 		this.context.stroke();
+		this.context.save()
+
 		
 	}
 }
@@ -313,6 +345,10 @@ function addBike(id, bikes) {
 	const newBike = new Bike(id, newCanvas, newBikeForm);
 	newBike.updateForm();	
 	newBike.update();
+	
+	// uncomment to save drawn help image
+	//window.location = newCanvas.toDataURL("image/png");
+	
 	bikes.push(newBike);
 
 	const bikeIds = [];
