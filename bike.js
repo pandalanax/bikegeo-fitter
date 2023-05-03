@@ -245,7 +245,9 @@ function Bike(id, cvs, form) {
 					localStorage.setItem(this.id, value); 
 					this.loadSavedData(); 
 					this.updateForm();
-					this.drawBike();})
+					this.drawBike();
+					this.updateFormReach(form);
+					this.updateFormStack(form);})
 				.catch((err) => { 
 					console.log(err); 
 					alert("Error loading bike data, check web console log for details !"); });			
