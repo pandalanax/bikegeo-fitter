@@ -222,7 +222,7 @@ function Bike(id, cvs, form) {
 		const a = document.createElement("a");
 		const file = new Blob([localStorage.getItem(this.id)], {type: "application/json"});
 		a.href = URL.createObjectURL(file);
-		a.download = "bike_" + this.name;
+		a.download = "bike_" +String(Date.now())+"_"+ this.name;
 		a.click();
 	}
 	
@@ -244,7 +244,8 @@ function Bike(id, cvs, form) {
 				.then((value) => { 
 					localStorage.setItem(this.id, value); 
 					this.loadSavedData(); 
-					this.updateForm();})
+					this.updateForm();
+					this.drawBike();})
 				.catch((err) => { 
 					console.log(err); 
 					alert("Error loading bike data, check web console log for details !"); });			
