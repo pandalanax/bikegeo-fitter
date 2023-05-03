@@ -285,15 +285,15 @@ function addBike(id, bikes) {
 		addCell(row_freach, "td", "input", "input",
 		{name: "freach", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
 	addCell(row_spacers, "td", "input", "input",
-		{name: "spacers", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
+		{name: "spacers", form: newBikeForm.id, type: "number", min : 0, max : 200, onChange : "bikes[" + index + "].update()"});
 	addCell(row_headset, "td", "input", "input",
-		{name: "headset", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
+		{name: "headset", form: newBikeForm.id, type: "number", min : 0, max : 100, onChange : "bikes[" + index + "].update()"});
 	addCell(row_sl, "td", "input", "input",
-		{name: "sl", form: newBikeForm.id, type: "number", min : 0, max : 999, onChange : "bikes[" + index + "].update()"});
+		{name: "sl", form: newBikeForm.id, type: "number", min : 0, max : 300, onChange : "bikes[" + index + "].update()"});
 	addCell(row_sa, "td", "input", "input",
 		{name: "sa", form: newBikeForm.id, type: "number", min : -90, max : 90, onChange : "bikes[" + index + "].update()"});
 		addCell(row_handlebarReach, "td", "input", "input",
-		{name: "handlebarReach", form: newBikeForm.id, type: "number", min : -90, max : 90, onChange : "bikes[" + index + "].update()"});
+		{name: "handlebarReach", form: newBikeForm.id, type: "number", min : 0, max : 200, onChange : "bikes[" + index + "].update()"});
 	//addCell(row_freach, "td", "output", "output", {name: "freach", form: newBikeForm.id});
 	//addCell(row_fstack, "td", "output", "output", {name: "fstack", form: newBikeForm.id});
 	addCell(row_reachWspc, "td", "output", "output", {name: "reachWspc", form: newBikeForm.id});
