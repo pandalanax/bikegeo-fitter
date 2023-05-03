@@ -19,7 +19,7 @@ const BB = [170, 270];
 const mm2px = 0.3;
 const canvasWidth = 600;
 const canvasHeight = 320;
-const numOfDec = 0;
+const numOfDec = 2;
 
 // Help toggle function
 const ch = document.getElementById("help");
