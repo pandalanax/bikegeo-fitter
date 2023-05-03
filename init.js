@@ -15,7 +15,7 @@
 //  Copyright 2014 Juha Virtakoivu
 
 // Some global variables
-const BB = [270, 220];
+const BB = [170, 270];
 const mm2px = 0.3;
 const canvasWidth = 600;
 const canvasHeight = 320;
