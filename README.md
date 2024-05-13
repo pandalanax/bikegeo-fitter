@@ -10,4 +10,4 @@ https://pandalanax.github.io/bikegeo-fitter/
 * Easy comparison between frames for same fit
  
 ## Credits
-* bikegeo-fitter uses code from the original project [bikegeo](https://github.com/Yellow-Me/bikegeo) under [GNU Affero General Public License v3.0](https://github.com/Yellow-Me/bikegeo/blob/master/LICENSE)
+* bikegeo-fitter uses code from the original project [bikegeo](https://github.com/Yellow-Me/bikegeo) under [AGPL-3.0](https://github.com/Yellow-Me/bikegeo/blob/master/LICENSE) license
