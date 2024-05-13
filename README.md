@@ -1,6 +1,9 @@
 # bikegeo-fitter
 Tool to calculate stack and reach for different frames. 
 
+## Try
+https://pandalanax.github.io/bikegeo-fitter/
+
 ## Features
 * Ability to save profiles and compare them with others
 * See how stack and reach change when changing stems or handlebars
